@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace DatingApp.API.Controllers
-{
+{ 
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -42,10 +42,12 @@ namespace DatingApp.API.Controllers
             return StatusCode(201);
 
         }
-
+        [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var userFromRepo = await _repo.Login(userForLoginDto.Username, userForLoginDto.Password);
+            try
+            {
+                var userFromRepo = await _repo.Login(userForLoginDto.Username, userForLoginDto.Password);
             if(userFromRepo == null){
                 return Unauthorized();
             }
@@ -71,6 +73,12 @@ namespace DatingApp.API.Controllers
             return Ok(new {
                 token = tokenHandler.WriteToken(token)
             });
+            }
+            catch
+            {
+                return StatusCode(500, "Computer really says no!");
+            }
+            
 
         }
     }
